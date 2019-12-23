@@ -1,5 +1,7 @@
 const fs = require('fs');
 const mapValues = require('lodash/mapValues');
+const maxBy = require('lodash/maxBy');
+const flatMap = require('lodash/flatMap');
 const allChapters = require('./chapters');
 
 function addSpace(l) {
@@ -45,7 +47,8 @@ function loadData(tag = 'cmn2006', splitChar='') {
 //loadData('engnet', ' ');
 
 
-function doChapter(chapter) {
+function doChapter(chapter, who, all, names=['cmn2006','engnet']) {
+    console.log(`processing ${chapter} ${who}/${all.length}`);
     const getFileName = tag=>`./data/${tag}_readaloud/${tag}_${chapter}_read.txt`;
     const process = tag=>{
         const fullName = getFileName(tag);
@@ -57,8 +60,24 @@ function doChapter(chapter) {
             return acc;
         }, []);
     };
-    //console.log(process('cmn2006'));
-    console.log(process('engnet'));
+    const d1 = (process(names[0]));
+    const d2 = (process(names[1]));
+
+    //console.log(maxBy(d1,d=>d.length));
+    //console.log(maxBy(d2,d=>d.length));
+    return [d1,d2];
 }
 
-doChapter('002_GEN_01');
+//doChapter('002_GEN_01');
+
+function processAllChapters() {
+    const allMapped = allChapters.map(doChapter);
+    const maxmax = allMapped.map(([d1,d2])=>{
+        const d1max = (maxBy(d1,d=>d.length));
+        const d2max = (maxBy(d2,d=>d.length));
+        return maxBy([d1max, d2max], d=>d.length);
+    });
+    const maxLen = (maxBy(maxmax,d=>d.length)).length;
+}
+
+processAllChapters();

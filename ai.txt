@@ -1,3 +1,6 @@
+https://machinelearningmastery.com/tutorial-first-neural-network-python-keras/
+
+
 model = tf.keras.models.Sequential([
   tf.keras.layers.Flatten(input_shape=(28, 28)),
   tf.keras.layers.Dense(256, activation='relu'),
