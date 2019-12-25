@@ -70,14 +70,48 @@ function doChapter(chapter, who, all, names=['cmn2006','engnet']) {
 
 //doChapter('002_GEN_01');
 
-function processAllChapters() {
-    const allMapped = allChapters.map(doChapter);
+function processAllChapters(names=['cmn2006','engnet']) {
+    const allMapped = allChapters
+    .slice(0,3) //TODO remove for full
+    .map(doChapter); 
     const maxmax = allMapped.map(([d1,d2])=>{
         const d1max = (maxBy(d1,d=>d.length));
         const d2max = (maxBy(d2,d=>d.length));
         return maxBy([d1max, d2max], d=>d.length);
     });
     const maxLen = (maxBy(maxmax,d=>d.length)).length;
+    const doKeysAndArray = (name, acc, data)=>{
+        const existing = acc[name];
+        const existing = data.reduce((acc, d)=>{
+
+        },acc[name]);
+        return {
+            ...acc,
+            name: existing,
+        };
+    };
+    const reduced = allMapped.reduce((acc, [d1,d2])=>{
+        const d1max = maxBy(d1,d=>d.length);
+        const d2max = maxBy(d2,d=>d.length);
+        const tmax = maxBy([d1max, d2max], d=>d.length);
+        if (tmax.length > acc.maxLen) {
+            acc.maxLen = tmax.length;
+        }
+        acc = doKeysAndArray(names[0],acc, d1);
+        acc = doKeysAndArray(names[1],acc, d2);
+        return acc;
+    },{
+        maxLen: 0,
+        colInfo: names.reduce((acc, name)=>{
+            acc[name] = {
+                keys:{},
+                keyAry:[],
+            }
+            return acc;
+        },{}),
+    });
+    console.log(`max len is ${maxLen}`);
+    console.log(reduced);
 }
 
 processAllChapters();
