@@ -80,14 +80,28 @@ function processAllChapters(names=['cmn2006','engnet']) {
         return maxBy([d1max, d2max], d=>d.length);
     });
     const maxLen = (maxBy(maxmax,d=>d.length)).length;
-    const doKeysAndArray = (name, acc, data)=>{
-        const existing = acc[name];
-        const existing = data.reduce((acc, d)=>{
-
-        },acc[name]);
+    const doKeysAndArray = (name, acc, wholedata)=>{
+        const colInfo = wholedata.reduce((acc, line)=>{
+            return line.reduce((acc, d)=>{
+                const found = acc.keys[d];
+                if (!found) {
+                    acc.keyAry.push(d);
+                    acc.keys[d] = {
+                        id: acc.keyAry.length,
+                        count: 1,
+                    };
+                }else {
+                    found.count++;
+                }
+                return acc;
+            },acc);
+        },acc.colInfo[name]);
         return {
             ...acc,
-            name: existing,
+            colInfo: {
+                ...acc.colInfo,
+                name: colInfo,
+            },
         };
     };
     const reduced = allMapped.reduce((acc, [d1,d2])=>{
@@ -112,6 +126,7 @@ function processAllChapters(names=['cmn2006','engnet']) {
     });
     console.log(`max len is ${maxLen}`);
     console.log(reduced);
+    fs.writeFileSync(`processed/${names.join('_')}_dict.json`, JSON.stringify(reduced));
 }
 
 processAllChapters();
