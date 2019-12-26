@@ -104,7 +104,7 @@ function processAllChapters(names=['cmn2006','engnet']) {
             },
         };
     };
-    const reduced = allMapped.reduce((acc, [d1,d2])=>{
+    const dictData = allMapped.reduce((acc, [d1,d2])=>{
         const d1max = maxBy(d1,d=>d.length);
         const d2max = maxBy(d2,d=>d.length);
         const tmax = maxBy([d1max, d2max], d=>d.length);
@@ -125,8 +125,37 @@ function processAllChapters(names=['cmn2006','engnet']) {
         },{}),
     });
     console.log(`max len is ${maxLen}`);
-    console.log(reduced);
-    fs.writeFileSync(`processed/${names.join('_')}_dict.json`, JSON.stringify(reduced));
+    //console.log(dictData);
+    fs.writeFileSync(`processed/${names.join('_')}_dict.json`, JSON.stringify(dictData));
+    const merged = allMapped.reduce((acc, d1d2)=>{
+        const expMerg = (tos, datas, who)=>{
+            const to = tos[who];
+            const chapters = datas[who];
+            const dict = dictData.colInfo[names[who]].keys;
+            chapters.forEach(line=>{
+                const t = line.map(c=>{
+                    return dict[c].id;
+                });
+                to.push(t.concat(Array(maxLen - t.length).fill(0)))
+            });
+            
+            //console.log(to);
+        };
+        expMerg(acc, d1d2, 0);
+        expMerg(acc, d1d2, 1);
+        return acc;
+    },[
+        [],[]
+    ]);
+
+
+    const createCsv = (who, datas)=>{
+        const data = datas[who];
+        fs.writeFileSync(`processed/${names[who]}.txt`, data.map(l=>l.map(l=>l.toString().padStart(4,' ')).join(',')).join('\n'));
+    };
+    createCsv(0, merged);
+    createCsv(1, merged);
 }
+
 
 processAllChapters();
