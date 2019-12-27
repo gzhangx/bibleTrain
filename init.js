@@ -13,7 +13,7 @@ function addSpace(l) {
 }
 function doSplit(line, splitChar) {
     if (splitChar === '')
-        return line.split(splitChar);
+        return addSpace(line).split(' ').map(x=>x.trim()).filter(x=>x!=='');
     const splits = addSpace(line.toLowerCase()).split(splitChar).filter(x=>x!=='');
     return splits;
 }
@@ -72,7 +72,7 @@ function doChapter(chapter, who, all, names=['cmn2006','engnet']) {
 
 function processAllChapters(names=['cmn2006','engnet']) {
     const allMapped = allChapters
-    //.slice(0,3) //TODO remove for full
+    .slice(0,30) //TODO remove for full
     .map(doChapter); 
     const maxmax = allMapped.map(([d1,d2])=>{
         const d1max = (maxBy(d1,d=>d.length));
@@ -157,9 +157,9 @@ function processAllChapters(names=['cmn2006','engnet']) {
 
     const createCsv = (who, datas)=>{
         const data = datas[who];
-        //fs.writeFileSync(`processed/${names[who]}.txt`, data.map(l=>l.map(l=>l.toString().padStart(4,' ')).join(',')).join('\n'));
+        fs.writeFileSync(`processed/${names[who]}.txt`, data.map(l=>l.map(l=>l.toString().padStart(4,' ')).join(',')).join('\n'));
         const kr = dictData.colInfo[names[who]].keyAry;
-        //fs.writeFileSync(`processed/${names[who]}_untranslated.txt`, data.map(l=>l.map(l=>(kr[l-1]||'').toString().padStart(4,' ')).join(',')).join('\n'));
+        fs.writeFileSync(`processed/${names[who]}_untranslated.txt`, data.map(l=>l.map(l=>(kr[l-1]||'').toString().padStart(4,' ')).join(',')).join('\n'));
     };
     createCsv(0, merged);
     createCsv(1, merged);
