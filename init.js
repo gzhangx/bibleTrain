@@ -163,6 +163,8 @@ function processAllChapters(names=['cmn2006','engnet']) {
     };
     createCsv(0, merged);
     createCsv(1, merged);
+    const getMaxLabel = who=>dictData.colInfo[names[who]].keyAry.length;
+    console.log(`d1 max label ${getMaxLabel(0)} d2=${getMaxLabel(1)}}`);
 }
 
 

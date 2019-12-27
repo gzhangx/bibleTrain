@@ -8,9 +8,9 @@ l2 = loadtxt('processed/cmn2006.txt', delimiter=',')
 train_dataset = tf.data.Dataset.from_tensor_slices((l1,l2))
 
 model = tf.keras.models.Sequential([
-  tf.keras.layers.Dense(256, activation='relu'),
-  tf.keras.layers.Dense(256, activation='relu'),
-  tf.keras.layers.Dense(82, activation='relu'),
+  tf.keras.layers.Dense(2082, activation='relu'),
+  tf.keras.layers.Dense(2082, activation='relu'),
+  tf.keras.layers.Dense(2082, activation='relu'),
 ])
 
 
