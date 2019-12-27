@@ -152,6 +152,8 @@ function processAllChapters(names=['cmn2006','engnet']) {
     const createCsv = (who, datas)=>{
         const data = datas[who];
         fs.writeFileSync(`processed/${names[who]}.txt`, data.map(l=>l.map(l=>l.toString().padStart(4,' ')).join(',')).join('\n'));
+        const kr = dictData.colInfo[names[who]].keyAry;
+        //fs.writeFileSync(`processed/${names[who]}_untranslated.txt`, data.map(l=>l.map(l=>(kr[l-1]||'').toString().padStart(4,' ')).join(',')).join('\n'));
     };
     createCsv(0, merged);
     createCsv(1, merged);
