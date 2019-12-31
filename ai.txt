@@ -20,8 +20,8 @@ model = tf.keras.models.Sequential([
   tf.keras.layers.Dense(2082, activation='relu'),
   tf.keras.layers.Dense(2082, activation='relu'),
   tf.keras.layers.Dense(2082, activation='relu'),
+  tf.keras.layers.Dense(2082, activation='softmax'),
 ])
-tf.keras.backend.set_floatx('float64')
 
 model.compile(optimizer='adam',
               loss='sparse_categorical_crossentropy',
