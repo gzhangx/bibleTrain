@@ -22,7 +22,8 @@ def doModel(i, epochcnt=500):
   # Create a callback that saves the model's weights
   cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_path, 
     save_weights_only=True, 
-    period=100,
+    period=10,
+    #save_freq = 500,
     verbose=1)
   model = tf.keras.models.Sequential([
     tf.keras.layers.Dense(94, activation='relu'),
@@ -41,9 +42,10 @@ def doModel(i, epochcnt=500):
   #model.load_weights(checkpoint_path)
   #tf.keras.backend.set_floatx('float64')
   model.fit(x=l1, y=l2[:,i:i+1], callbacks=[cp_callback],epochs=epochcnt)
+  return model
 
-
+models = []
 for i in range(0,10) :
-   doModel(i, 300)
+   models.append(doModel(i, 11))
 
 #model.evaluate(x_test,  y_test, verbose=2)
