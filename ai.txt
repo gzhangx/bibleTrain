@@ -13,7 +13,7 @@ l2 = array(l2)
 
 
 
-def doModel(i):
+def doModel(i, epochcnt=500):
   print("doing " + str(i))
   chkdir = "processed/chk"+str(i)
   Path(chkdir).mkdir(parents=True, exist_ok=True)
@@ -39,7 +39,7 @@ def doModel(i):
     print ("File not exist")
   #model.load_weights(checkpoint_path)
   #tf.keras.backend.set_floatx('float64')
-  model.fit(x=l1, y=l2[:,i:i+1], callbacks=[cp_callback],epochs=500)
+  model.fit(x=l1, y=l2[:,i:i+1], callbacks=[cp_callback],epochs=epochcnt)
 
 
 for i in range(0,1) :
