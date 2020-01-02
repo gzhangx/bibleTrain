@@ -55,6 +55,22 @@ for i in range(0,10) :
 a= [5,6,7,8,9,6,10,11,6,12]
 a.extend([0]*(94-len(a)))
 
+
+import json
+
+file_object = open("processed/cmn2006_engnet_dict.json", 'r', encoding='utf8')
+# Load JSON file data to a python dict object.
+dict_object = json.load(file_object)
+
+
+import codecs
+
+file = codecs.open("temp.txt", "w", "utf-8")
 for i in range(0,10):
   co = numpy.array(models[i].predict([a])[0])  
-  print(numpy.where(co==max(co))[0][0])
+  ind = (numpy.where(co==max(co))[0][0])
+  chn = dict_object['colInfo']['cmn2006']['keyAry'][ind+1]
+  print(chn)
+  file.write(chn)
+
+file.close()
