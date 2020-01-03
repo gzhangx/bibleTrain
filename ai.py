@@ -8,6 +8,9 @@ import os
 import tensorflow as tf
 from pathlib import Path
 
+maxLen = 456
+maxOutChars = 13528
+
 l1 = loadtxt('processed/engnet.txt', delimiter=',')
 l2 = loadtxt('processed/cmn2006.txt', delimiter=',')
 l2 = array(l2)
@@ -22,10 +25,10 @@ def getCheckpointPath(i):
 
 def createModel(i):    
   model = tf.keras.models.Sequential([
-    tf.keras.layers.Dense(94, activation='relu'),
-    tf.keras.layers.Dense(94, activation='relu'),
-    tf.keras.layers.Dense(94, activation='relu'),
-    tf.keras.layers.Dense(2082, activation='softmax'),
+    tf.keras.layers.Dense(maxLen, activation='relu'),
+    tf.keras.layers.Dense(maxLen, activation='relu'),
+    tf.keras.layers.Dense(maxLen, activation='relu'),
+    tf.keras.layers.Dense(maxOutChars, activation='softmax'),
   ])
   model.compile(optimizer='adam',
               loss='sparse_categorical_crossentropy',
@@ -56,11 +59,11 @@ def doModel(i, epochcnt=500):
 
 models = []
 for i in range(0,10) :
-   models.append(doModel(i, 11))
+   models.append(doModel(i, 100))
 
 
-for i in range(0,10) :
-   models.append(createModel(i))
+#for i in range(0,10) :
+#   models.append(createModel(i))
 
 #model.evaluate(x_test,  y_test, verbose=2)
 
@@ -96,7 +99,7 @@ for c in a:
 a = list(map(lambda x: x["id"], a))
 
 #a= [5,6,7,8,9,6,10,11,6,12]
-a.extend([0]*(94-len(a)))
+a.extend([0]*(maxOutChars-len(a)))
 
 import codecs
 

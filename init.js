@@ -80,7 +80,9 @@ function processAllChapters(names=['cmn2006','engnet']) {
         return maxBy([d1max, d2max], d=>d.length);
     });
     const maxLen = (maxBy(maxmax,d=>d.length)).length;
-    const doKeysAndArray = (name, acc, wholedata)=>{
+    const doKeysAndArray = (who, names, acc, wholedatas)=>{
+        const name = names[who];
+        const wholedata = wholedatas[who];
         const colInfo = wholedata.reduce((acc, line)=>{
             return line.reduce((acc, d)=>{
                 const found = acc.keys[d];
@@ -96,7 +98,8 @@ function processAllChapters(names=['cmn2006','engnet']) {
                 return acc;
             },acc);
         },acc.colInfo[name]);
-        return {
+        acc.charCounts[who] = colInfo.keyAry.length;
+        return {            
             ...acc,
             colInfo: {
                 ...acc.colInfo,
@@ -108,7 +111,8 @@ function processAllChapters(names=['cmn2006','engnet']) {
         'UNK',
         ' ',
     ];
-    const dictData = allMapped.reduce((acc, [d1,d2])=>{
+    const dictData = allMapped.reduce((acc, all)=>{
+        const [d1,d2] = all;
         if (d1.length === d2.length) {
             acc.goodCount++;
         }else {
@@ -122,13 +126,14 @@ function processAllChapters(names=['cmn2006','engnet']) {
         if (tmax.length > acc.maxLen) {
             acc.maxLen = tmax.length;
         }
-        acc = doKeysAndArray(names[0],acc, d1);
-        acc = doKeysAndArray(names[1],acc, d2);
+        acc = doKeysAndArray(0, names,acc, all);
+        acc = doKeysAndArray(1, names,acc, all);
         return acc;
     },{
         maxLen: 0,
         goodCount: 0,
         badCount: 0,
+        charCounts:[0,0],
         bads:[],
         colInfo: names.reduce((acc, name)=>{
             acc[name] = {
@@ -150,8 +155,11 @@ function processAllChapters(names=['cmn2006','engnet']) {
     });
 
     fs.writeFileSync(`processed/${names.join('_')}_dict.json`, JSON.stringify(dictData));
+    fs.writeFileSync(`processed/chars0.json`, JSON.stringify(dictData.colInfo[names[0]].keyAry));
+    fs.writeFileSync(`processed/chars1.json`, JSON.stringify(dictData.colInfo[names[1]].keyAry));
 
-    console.log(`max len is ${maxLen}`);
+
+    console.log(`max len is ${maxLen}, charCounts = ${dictData.charCounts}`);
     console.log(`good count ${dictData.goodCount} bad=${dictData.badCount}`);
     const merged = allMapped.filter(([d1,d2])=>{
         return d1.length === d2.length;
