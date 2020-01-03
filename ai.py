@@ -41,9 +41,7 @@ def createModel(i):
 
 def doModel(i, epochcnt=500):  
   model = createModel(i)
-  chkdir = getChkDir(i)  
   checkpoint_path = getCheckpointPath(i)
-  checkpoint_dir = os.path.dirname(checkpoint_path)
   # Create a callback that saves the model's weights
   cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_path, 
     save_weights_only=True, 
@@ -57,12 +55,12 @@ def doModel(i, epochcnt=500):
   return model
 
 models = []
-for i in range(0,100) :
+for i in range(0,10) :
    models.append(doModel(i, 11))
 
 
-#for i in range(0,10) :
-#   models.append(createModel(i))
+for i in range(0,10) :
+   models.append(createModel(i))
 
 #model.evaluate(x_test,  y_test, verbose=2)
 
@@ -72,7 +70,7 @@ for i in range(0,100) :
 
 
 
-inputStr = "God said Let there be light And there was light"
+inputStr = "create"
 
 import json
 
@@ -106,8 +104,12 @@ file = codecs.open("temp.txt", "w", "utf-8")
 for i in range(0,10):
   co = numpy.array(models[i].predict([a])[0])  
   ind = (numpy.where(co==max(co))[0][0])
-  chn = dict_object['colInfo']['cmn2006']['keyAry'][ind+1]
-  print(chn)
+  if ind == 0:
+    chn = ' '
+  else:
+    chn = dict_object['colInfo']['cmn2006']['keyAry'][ind-1]  
+  print(ind)
   file.write(chn)
 
 file.close()
+
