@@ -11,20 +11,15 @@ l1 = loadtxt('processed/engnet.txt', delimiter=',')
 l2 = loadtxt('processed/cmn2006.txt', delimiter=',')
 l2 = array(l2)
 
-
-
-def doModel(i, epochcnt=500):
-  print("doing " + str(i))
+def getChkDir(i):
   chkdir = "processed/chk"+str(i)
   Path(chkdir).mkdir(parents=True, exist_ok=True)
-  checkpoint_path = chkdir + "/cp.ckpt"
-  checkpoint_dir = os.path.dirname(checkpoint_path)
-  # Create a callback that saves the model's weights
-  cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_path, 
-    save_weights_only=True, 
-    period=10,
-    #save_freq = 500,
-    verbose=1)
+  return chkdir
+
+def getCheckpointPath(i):
+  return getChkDir(i) + "/cp.ckpt"
+
+def createModel(i):    
   model = tf.keras.models.Sequential([
     tf.keras.layers.Dense(94, activation='relu'),
     tf.keras.layers.Dense(94, activation='relu'),
@@ -34,19 +29,38 @@ def doModel(i, epochcnt=500):
   model.compile(optimizer='adam',
               loss='sparse_categorical_crossentropy',
               metrics=['accuracy'])
+  chkdir = getChkDir(i)
+  checkpoint_path = getCheckpointPath(i)
   if os.path.isfile(chkdir+"/checkpoint"):
     print ("File exist")
     model.load_weights(checkpoint_path)
   else:
     print ("File not exist")
+  return model
+
+def doModel(i, epochcnt=500):  
+  model = createModel(i)
+  chkdir = getChkDir(i)  
+  checkpoint_path = getCheckpointPath(i)
+  checkpoint_dir = os.path.dirname(checkpoint_path)
+  # Create a callback that saves the model's weights
+  cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_path, 
+    save_weights_only=True, 
+    period=10,
+    #save_freq = 500,
+    verbose=1)
   #model.load_weights(checkpoint_path)
   #tf.keras.backend.set_floatx('float64')
   model.fit(x=l1, y=l2[:,i:i+1], callbacks=[cp_callback],epochs=epochcnt)
+  #model.save("processed/models/"+str(i))
   return model
+
+for i in range(0,10) :
+   doModel(i, 11)
 
 models = []
 for i in range(0,10) :
-   models.append(doModel(i, 11))
+   models.append(createModel(i))
 
 #model.evaluate(x_test,  y_test, verbose=2)
 
