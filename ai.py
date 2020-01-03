@@ -9,7 +9,7 @@ import tensorflow as tf
 from pathlib import Path
 
 maxLen = 456
-maxOutChars = 13528
+maxOutChars = 3743
 
 l1 = loadtxt('processed/engnet.txt', delimiter=',')
 l2 = loadtxt('processed/cmn2006.txt', delimiter=',')
