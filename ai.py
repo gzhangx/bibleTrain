@@ -1,8 +1,9 @@
-https://machinelearningmastery.com/tutorial-first-neural-network-python-keras/
-https://www.tensorflow.org/tensorboard/get_started
+# https://machinelearningmastery.com/tutorial-first-neural-network-python-keras/
+# https://www.tensorflow.org/tensorboard/get_started
 
 from numpy import loadtxt
 from numpy import array
+import numpy
 import os
 import tensorflow as tf
 from pathlib import Path
@@ -55,8 +56,8 @@ def doModel(i, epochcnt=500):
   #model.save("processed/models/"+str(i))
   return model
 
-for i in range(0,10) :
-   doModel(i, 11)
+#for i in range(0,10) :
+#   doModel(i, 11)
 
 models = []
 for i in range(0,10) :
@@ -66,9 +67,11 @@ for i in range(0,10) :
 
 
 #testing
-a= [5,6,7,8,9,6,10,11,6,12]
-a.extend([0]*(94-len(a)))
 
+
+
+
+inputStr = "God said Let there be light And there was light"
 
 import json
 
@@ -76,6 +79,25 @@ file_object = open("processed/cmn2006_engnet_dict.json", 'r', encoding='utf8')
 # Load JSON file data to a python dict object.
 dict_object = json.load(file_object)
 
+def wordToSeq(inputWord):
+  inputWord = inputWord.lower()
+  keys = dict_object['colInfo']['engnet']['keys']
+  if inputWord in keys:
+    return keys[inputWord]
+  return {"id": ' ', "name": inputWord}
+
+inputWords = inputStr.split()
+a = map(wordToSeq, inputWords)
+a = list(a)
+for c in a:
+  print(c)
+  if c['id'] == ' ':
+    print("Bad word " + c.name)
+
+a = list(map(lambda x: x["id"], a))
+
+#a= [5,6,7,8,9,6,10,11,6,12]
+a.extend([0]*(94-len(a)))
 
 import codecs
 
