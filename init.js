@@ -72,7 +72,7 @@ function doChapter(chapter, who, all, names=['cmn2006','engnet']) {
 
 function processAllChapters(names=['cmn2006','engnet']) {
     const allMapped = allChapters
-    .slice(0,30) //TODO remove for full
+    .slice(0,60) //TODO remove for full
     .map(doChapter); 
     const maxmax = allMapped.map(([d1,d2])=>{
         const d1max = (maxBy(d1,d=>d.length));
