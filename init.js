@@ -72,7 +72,7 @@ function doChapter(chapter, who, all, names=['cmn2006','engnet']) {
 
 function processAllChapters(names=['cmn2006','engnet']) {
     const allMapped = allChapters
-    .slice(0,60) //TODO remove for full
+    //.slice(0,60) //TODO remove for full
     .map(doChapter); 
     const maxmax = allMapped.map(([d1,d2])=>{
         const d1max = (maxBy(d1,d=>d.length));
@@ -105,6 +105,13 @@ function processAllChapters(names=['cmn2006','engnet']) {
         };
     };
     const dictData = allMapped.reduce((acc, [d1,d2])=>{
+        if (d1.length === d2.length) {
+            acc.goodCount++;
+        }else {
+            acc.badCount++;
+            acc.bads.push(`chappter ${d1[0]} ${d1[1]}  ${d1.length} ${d2.length}`);
+            return acc;
+        }
         const d1max = maxBy(d1,d=>d.length);
         const d2max = maxBy(d2,d=>d.length);
         const tmax = maxBy([d1max, d2max], d=>d.length);
@@ -116,27 +123,41 @@ function processAllChapters(names=['cmn2006','engnet']) {
         return acc;
     },{
         maxLen: 0,
+        goodCount: 0,
+        badCount: 0,
+        bads:[],
         colInfo: names.reduce((acc, name)=>{
             acc[name] = {
-                keys:{},
-                keyAry:[],
+                keys:{
+                    ' ': {
+                        id: 0,
+                    }
+                },
+                keyAry:[
+                    ' '
+                ],
             }
             return acc;
         },{}),
-    });
-    console.log(`max len is ${maxLen}`);
+    });    
     //console.log(dictData);
-    fs.writeFileSync(`processed/${names.join('_')}_dict.json`, JSON.stringify(dictData));
-
+    
     allMapped.forEach(([d1,d2])=>{
         if (d1.length !== d2.length) {
             console.log(`chappter ${d1[0]} ${d1[1]}  ${d1.length} ${d2.length}`);
         }
     });
-    const merged = allMapped.reduce((acc, d1d2)=>{
+
+    fs.writeFileSync(`processed/${names.join('_')}_dict.json`, JSON.stringify(dictData));
+
+    console.log(`max len is ${maxLen}`);
+    console.log(`good count ${dictData.goodCount} bad=${dictData.badCount}`);
+    const merged = allMapped.filter(([d1,d2])=>{
+        return d1.length === d2.length;
+    }).reduce((acc, d1d2)=>{
         const expMerg = (tos, datas, who)=>{
             const to = tos[who];
-            const chapters = datas[who];
+            const chapters = datas[who];            
             const dict = dictData.colInfo[names[who]].keys;
             chapters.forEach(line=>{
                 const t = line.map(c=>{
