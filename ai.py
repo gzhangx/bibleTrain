@@ -56,12 +56,13 @@ def doModel(i, epochcnt=500):
   #model.save("processed/models/"+str(i))
   return model
 
-#for i in range(0,10) :
-#   doModel(i, 11)
-
 models = []
-for i in range(0,10) :
-   models.append(createModel(i))
+for i in range(0,100) :
+   models.append(doModel(i, 11))
+
+
+#for i in range(0,10) :
+#   models.append(createModel(i))
 
 #model.evaluate(x_test,  y_test, verbose=2)
 
