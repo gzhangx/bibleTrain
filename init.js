@@ -104,6 +104,10 @@ function processAllChapters(names=['cmn2006','engnet']) {
             },
         };
     };
+    const getInitKeys = ()=>[
+        'UNK',
+        ' ',
+    ];
     const dictData = allMapped.reduce((acc, [d1,d2])=>{
         if (d1.length === d2.length) {
             acc.goodCount++;
@@ -128,14 +132,11 @@ function processAllChapters(names=['cmn2006','engnet']) {
         bads:[],
         colInfo: names.reduce((acc, name)=>{
             acc[name] = {
-                keys:{
-                    ' ': {
-                        id: 0,
-                    }
-                },
-                keyAry:[
-                    ' '
-                ],
+                keys: getInitKeys().reduce((acc, k,id)=>({
+                    ...acc,
+                    [k]:{id}
+                }),{}),
+                keyAry: getInitKeys(),
             }
             return acc;
         },{}),
